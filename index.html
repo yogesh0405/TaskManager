@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Task Manager</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <span></span>
+        </div>
+        <div>
+          <p class="eyebrow">CampusFlow</p>
+          <h1>Task Manager</h1>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-label">Workspace</div>
+        <a href="#" class="nav-link active">
+          <span class="nav-icon">▦</span>
+          <span>My Tasks</span>
+        </a>
+        <a href="#" class="nav-link">
+          <span class="nav-icon">◌</span>
+          <span>Study Plan</span>
+        </a>
+        <a href="#" class="nav-link">
+          <span class="nav-icon">✓</span>
+          <span>Completed</span>
+        </a>
+        <a href="#" class="nav-link">
+          <span class="nav-icon">☼</span>
+          <span>Calendar</span>
+        </a>
+        <a href="#" class="nav-link">
+          <span class="nav-icon">♟</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-card">
+        <div class="date-block">
+          <span class="day-name" id="todayDay">Monday</span>
+          <span class="date-number" id="todayDate">11 Aug</span>
+        </div>
+        <button class="outline-button full-width">Today Focus</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="page-kicker">Student Dashboard</p>
+          <h2>Today’s Tasks</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button">☼</button>
+          <button class="primary-button" id="openTaskForm">+ Add Task</button>
+        </div>
+      </header>
+
+      <section class="stats-row">
+        <article class="stat-card">
+          <div>
+            <span class="stat-label">Total Tasks</span>
+            <span class="stat-value" id="totalTasks">0</span>
+          </div>
+          <span class="stat-icon">☰</span>
+        </article>
+
+        <article class="stat-card">
+          <div>
+            <span class="stat-label">In Progress</span>
+            <span class="stat-value" id="activeTasks">0</span>
+          </div>
+          <span class="stat-icon">⟳</span>
+        </article>
+
+        <article class="stat-card">
+          <div>
+            <span class="stat-label">Completed</span>
+            <span class="stat-value" id="completedTasks">0</span>
+          </div>
+          <span class="stat-icon">✓</span>
+        </article>
+      </section>
+
+      <section class="content-layout">
+        <section class="task-panel">
+          <div class="section-header">
+            <div>
+              <span class="section-label">Task List</span>
+              <h3>Weekly Agenda</h3>
+            </div>
+            <div class="view-actions">
+              <button class="icon-button">☰</button>
+              <button class="icon-button">☑</button>
+            </div>
+          </div>
+
+          <div class="tasks-container" id="tasksList">
+            <!-- Tasks render here -->
+          </div>
+        </section>
+
+        <aside class="focus-panel">
+          <div class="focus-card">
+            <div class="focus-header">
+              <div>
+                <span class="section-label">Study Priority</span>
+                <h3>Next Session</h3>
+              </div>
+              <span class="round-badge">01</span>
+            </div>
+
+            <div class="priority-content">
+              <h4 id="nextTaskTitle">No active task</h4>
+              <p id="nextTaskMeta">Add your next study task</p>
+              <div class="progress-wrap">
+                <div class="progress-label">
+                  <span>Progress</span>
+                  <span id="progressText">0%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
+              </div>
+              <button class="primary-button full-width mt-20">Start Session</button>
+            </div>
+          </div>
+
+          <div class="mini-calendar">
+            <div class="cal-header">
+              <span>August 2026</span>
+              <div>
+                <button class="icon-button small">‹</button>
+                <button class="icon-button small">›</button>
+              </div>
+            </div>
+            <div class="calendar-days">
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+              <span>Sun</span>
+            </div>
+            <div class="calendar-dates">
+              <button class="date-button muted">29</button>
+              <button class="date-button muted">30</button>
+              <button class="date-button muted">31</button>
+              <button class="date-button">1</button>
+              <button class="date-button">2</button>
+              <button class="date-button">3</button>
+              <button class="date-button">4</button>
+              <button class="date-button">5</button>
+              <button class="date-button">6</button>
+              <button class="date-button">7</button>
+              <button class="date-button">8</button>
+              <button class="date-button">9</button>
+              <button class="date-button active">11</button>
+              <button class="date-button">12</button>
+              <button class="date-button">13</button>
+              <button class="date-button">14</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <section class="modal-overlay" id="taskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <span class="section-label">Create Study Task</span>
+          <h3>Add New Task</h3>
+        </div>
+        <button class="icon-button" id="closeModal">×</button>
+      </div>
+
+      <form class="task-form" id="taskForm">
+        <label class="form-field">
+          <span>Task Title</span>
+          <input type="text" id="taskTitle" placeholder="e.g. Read chemistry chapter" required />
+        </label>
+
+        <label class="form-field">
+          <span>Course / Subject</span>
+          <input type="text" id="taskSubject" placeholder="e.g. Chemistry" required />
+        </label>
+        <label class="form-field">
+          <span>Due Date</span>
+          <input type="date" id="taskDate" required />
+        </label>
+
+        <label class="form-field">
+          <span>Priority</span>
+          <select id="taskPriority">
+            <option value="High">High Priority</option>
+            <option value="Medium" selected>Medium Priority</option>
+            <option value="Low">Low Priority</option>
+          </select>
+        </label>
+
+        <div class="form-actions">
+          <button type="button" class="outline-button" id="cancelTask">Cancel</button>
+          <button type="submit" class="primary-button">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
