@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Task Manager</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/profile.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -37,7 +38,7 @@
           <span class="nav-icon">☼</span>
           <span>Calendar</span>
         </a>
-        <a href="#" class="nav-link">
+        <a href="#" class="nav-link" id="profileMenuLink">
           <span class="nav-icon">♟</span>
           <span>Profile</span>
         </a>
@@ -217,6 +218,67 @@
     </div>
   </section>
 
+  <section class="profile-modal-overlay" id="profileModal">
+    <div class="profile-modal">
+      <div class="profile-modal-header">
+        <div>
+          <span class="section-label">Account</span>
+          <h3>Student Profile</h3>
+        </div>
+        <button class="icon-button" id="closeProfile">×</button>
+      </div>
+
+      <div class="profile-content">
+        <div class="profile-avatar">
+          <div class="avatar-circle">👤</div>
+        </div>
+
+        <div class="profile-info">
+          <div class="profile-field">
+            <span class="field-label">Full Name</span>
+            <p class="field-value" id="profileName">John Doe</p>
+          </div>
+
+          <div class="profile-field">
+            <span class="field-label">Email</span>
+            <p class="field-value" id="profileEmail">john.doe@university.edu</p>
+          </div>
+
+          <div class="profile-field">
+            <span class="field-label">Student ID</span>
+            <p class="field-value" id="profileId">STU-2026-0847</p>
+          </div>
+
+          <div class="profile-field">
+            <span class="field-label">Course</span>
+            <p class="field-value" id="profileCourse">Computer Science</p>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="stat-mini">
+            <span class="stat-number" id="profileTasksCount">0</span>
+            <span class="stat-name">Total Tasks</span>
+          </div>
+          <div class="stat-mini">
+            <span class="stat-number" id="profileCompletedCount">0</span>
+            <span class="stat-name">Completed</span>
+          </div>
+          <div class="stat-mini">
+            <span class="stat-number" id="profileCompletionRate">0%</span>
+            <span class="stat-name">Completion</span>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button class="outline-button full-width" id="editProfileBtn">Edit Profile</button>
+          <button class="outline-button full-width" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <script src="js/app.js"></script>
+  <script src="js/profile.js"></script>
 </body>
 </html>
