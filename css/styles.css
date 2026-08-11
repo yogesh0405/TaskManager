@@ -130,9 +130,15 @@ body {
   color: #161616;
 }
 
+.nav-link.settings-link {
+  margin-top: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .sidebar-card {
   margin-top: auto;
-  border-top: 1px solid rgba(255,255,255,0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   padding-top: 24px;
 }
 
@@ -140,7 +146,7 @@ body {
   background: #1d1d1d;
   border-radius: 18px;
   padding: 24px 20px;
-  border: 1px solid rgba(255,255,255,.12);
+  border: 1px solid rgba(255, 255, 255, .12);
 }
 
 .date-block .day-name {
