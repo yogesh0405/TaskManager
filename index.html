@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Task Manager</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/studyplan.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -21,11 +22,11 @@
 
       <nav class="nav-menu">
         <div class="nav-label">Workspace</div>
-        <a href="#" class="nav-link active">
+        <a href="#" class="nav-link active" data-page="dashboard">
           <span class="nav-icon">▦</span>
           <span>My Tasks</span>
         </a>
-        <a href="#" class="nav-link">
+        <a href="#" class="nav-link" data-page="studyPlan">
           <span class="nav-icon">◌</span>
           <span>Study Plan</span>
         </a>
@@ -53,18 +54,19 @@
     </aside>
 
     <main class="main-content">
-      <header class="topbar">
-        <div>
-          <p class="page-kicker">Student Dashboard</p>
-          <h2>Today’s Tasks</h2>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-button">☼</button>
-          <button class="primary-button" id="openTaskForm">+ Add Task</button>
-        </div>
-      </header>
+      <div id="dashboardPage">
+        <header class="topbar">
+          <div>
+            <p class="page-kicker">Student Dashboard</p>
+            <h2>Today’s Tasks</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button">☼</button>
+            <button class="primary-button" id="openTaskForm">+ Add Task</button>
+          </div>
+        </header>
 
-      <section class="stats-row">
+        <section class="stats-row">
         <article class="stat-card">
           <div>
             <span class="stat-label">Total Tasks</span>
@@ -172,6 +174,69 @@
           </div>
         </aside>
       </section>
+      </div>
+
+      <section class="studyplan-page hidden" id="studyPlanPage">
+        <header class="topbar">
+          <div>
+            <p class="page-kicker">Study Plan</p>
+            <h2>Weekly Learning Goals</h2>
+          </div>
+        </header>
+
+        <section class="studyplan-grid">
+          <section class="studyplan-panel">
+            <div class="section-header">
+              <div>
+                <span class="section-label">Study Plan</span>
+                <h3>Create your next sessions</h3>
+              </div>
+            </div>
+
+            <form class="studyplan-form" id="studyPlanForm">
+              <label class="form-field">
+                <span>Study Topic</span>
+                <input type="text" id="studyTopic" placeholder="e.g. Review Physics" required />
+              </label>
+              <label class="form-field">
+                <span>Session Date</span>
+                <input type="date" id="studyDatePlan" required />
+              </label>
+              <div class="form-actions">
+                <button type="submit" class="primary-button">Add to Plan</button>
+              </div>
+            </form>
+
+            <div class="studyplan-summary">
+              <div>
+                <span class="stat-label">Planned items</span>
+                <span class="stat-value" id="planTotal">0</span>
+              </div>
+              <div>
+                <span class="stat-label">Completed</span>
+                <span class="stat-value" id="planCompleted">0</span>
+              </div>
+            </div>
+
+            <div class="studyplan-list" id="studyPlanList"></div>
+          </section>
+
+          <aside class="studyplan-info">
+            <div class="info-card">
+              <div class="info-header">
+                <span class="section-label">Study Focus</span>
+                <h3>Focus habits</h3>
+              </div>
+              <p>Keep your study routine visible by planning one focused topic per session. Mark items complete to track weekly progress.</p>
+              <ul class="info-list">
+                <li>Set a clear subject and date</li>
+                <li>Break large sessions into 30-minute goals</li>
+                <li>Review completed items at the end of the week</li>
+              </ul>
+            </div>
+          </aside>
+        </section>
+      </section>
     </main>
   </div>
 
@@ -218,5 +283,6 @@
   </section>
 
   <script src="js/app.js"></script>
+  <script src="js/studyplan.js"></script>
 </body>
 </html>
