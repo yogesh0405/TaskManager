@@ -551,6 +551,7 @@ body {
 }
 
 .date-button {
+  position: relative;
   border: none;
   background: transparent;
   color: var(--text);
@@ -559,6 +560,11 @@ body {
   height: 34px;
   cursor: pointer;
   font-size: 11px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.date-button:hover {
+  background: var(--ash-light);
 }
 
 .date-button.muted {
@@ -568,6 +574,27 @@ body {
 .date-button.active {
   background: var(--ink);
   color: white;
+}
+
+.date-button.has-task::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  transform: translateX(-50%);
+}
+
+.date-button.active.has-task::after {
+  background: white;
+}
+
+.date-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .modal-overlay {
