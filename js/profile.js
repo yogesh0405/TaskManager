@@ -1,7 +1,7 @@
 // Profile Management
 
 const profileModal = document.getElementById('profileModal');
-const profileMenuLink = document.getElementById('profileMenuLink');
+const profileMenuLink = document.querySelector('.nav-link[data-view="profile"]');
 const closeProfileButton = document.getElementById('closeProfile');
 const editProfileBtn = document.getElementById('editProfileBtn');
 const logoutBtn = document.getElementById('logoutBtn');
