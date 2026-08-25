@@ -6,6 +6,7 @@
   <title>Student Task Manager</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/profile.css" />
+  <link rel="stylesheet" href="css/calendar.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -22,23 +23,23 @@
 
       <nav class="nav-menu">
         <div class="nav-label">Workspace</div>
-        <a href="#" class="nav-link active">
+        <a href="#" class="nav-link active" data-view="tasks">
           <span class="nav-icon">▦</span>
           <span>My Tasks</span>
         </a>
-        <a href="#" class="nav-link">
+        <a href="#" class="nav-link" data-view="study-plan">
           <span class="nav-icon">◌</span>
           <span>Study Plan</span>
         </a>
-        <a href="#" class="nav-link">
+        <a href="#" class="nav-link" data-view="completed">
           <span class="nav-icon">✓</span>
           <span>Completed</span>
         </a>
-        <a href="#" class="nav-link">
+        <a href="#" class="nav-link" data-view="calendar">
           <span class="nav-icon">☼</span>
           <span>Calendar</span>
         </a>
-        <a href="#" class="nav-link" id="profileMenuLink">
+        <a href="#" class="nav-link" data-view="profile">
           <span class="nav-icon">♟</span>
           <span>Profile</span>
         </a>
@@ -54,96 +55,134 @@
     </aside>
 
     <main class="main-content">
-      <header class="topbar">
-        <div>
-          <p class="page-kicker">Student Dashboard</p>
-          <h2>Today’s Tasks</h2>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-button">☼</button>
-          <button class="primary-button" id="openTaskForm">+ Add Task</button>
-        </div>
-      </header>
-
-      <section class="stats-row">
-        <article class="stat-card">
+      <section class="view-panel active" data-view-panel="tasks">
+        <header class="topbar">
           <div>
-            <span class="stat-label">Total Tasks</span>
-            <span class="stat-value" id="totalTasks">0</span>
+            <p class="page-kicker">Student Dashboard</p>
+            <h2>Today’s Tasks</h2>
           </div>
-          <span class="stat-icon">☰</span>
-        </article>
-
-        <article class="stat-card">
-          <div>
-            <span class="stat-label">In Progress</span>
-            <span class="stat-value" id="activeTasks">0</span>
+          <div class="topbar-actions">
+            <button class="icon-button">☼</button>
+            <button class="primary-button" id="openTaskForm">+ Add Task</button>
           </div>
-          <span class="stat-icon">⟳</span>
-        </article>
+        </header>
 
-        <article class="stat-card">
-          <div>
-            <span class="stat-label">Completed</span>
-            <span class="stat-value" id="completedTasks">0</span>
-          </div>
-          <span class="stat-icon">✓</span>
-        </article>
-      </section>
-
-      <section class="content-layout">
-        <section class="task-panel">
-          <div class="section-header">
+        <section class="stats-row">
+          <article class="stat-card">
             <div>
-              <span class="section-label">Task List</span>
-              <h3>Weekly Agenda</h3>
+              <span class="stat-label">Total Tasks</span>
+              <span class="stat-value" id="totalTasks">0</span>
             </div>
-            <div class="view-actions">
-              <button class="icon-button">☰</button>
-              <button class="icon-button">☑</button>
-            </div>
-          </div>
+            <span class="stat-icon">☰</span>
+          </article>
 
-          <div class="tasks-container" id="tasksList">
-            <!-- Tasks render here -->
-          </div>
+          <article class="stat-card">
+            <div>
+              <span class="stat-label">In Progress</span>
+              <span class="stat-value" id="activeTasks">0</span>
+            </div>
+            <span class="stat-icon">⟳</span>
+          </article>
+
+          <article class="stat-card">
+            <div>
+              <span class="stat-label">Completed</span>
+              <span class="stat-value" id="completedTasks">0</span>
+            </div>
+            <span class="stat-icon">✓</span>
+          </article>
         </section>
 
-        <aside class="focus-panel">
-          <div class="focus-card">
-            <div class="focus-header">
+        <section class="content-layout">
+          <section class="task-panel">
+            <div class="section-header">
               <div>
-                <span class="section-label">Study Priority</span>
-                <h3>Next Session</h3>
+                <span class="section-label">Task List</span>
+                <h3>Weekly Agenda</h3>
               </div>
-              <span class="round-badge">01</span>
+              <div class="view-actions">
+                <button class="icon-button">☰</button>
+                <button class="icon-button">☑</button>
+              </div>
             </div>
 
-            <div class="priority-content">
-              <h4 id="nextTaskTitle">No active task</h4>
-              <p id="nextTaskMeta">Add your next study task</p>
-              <div class="progress-wrap">
-                <div class="progress-label">
-                  <span>Progress</span>
-                  <span id="progressText">0%</span>
+            <div class="tasks-container" id="tasksList">
+              <!-- Tasks render here -->
+            </div>
+          </section>
+
+          <aside class="focus-panel">
+            <div class="focus-card">
+              <div class="focus-header">
+                <div>
+                  <span class="section-label">Study Priority</span>
+                  <h3>Next Session</h3>
                 </div>
-                <div class="progress-track">
-                  <div class="progress-fill" id="progressFill"></div>
+                <span class="round-badge">01</span>
+              </div>
+
+              <div class="priority-content">
+                <h4 id="nextTaskTitle">No active task</h4>
+                <p id="nextTaskMeta">Add your next study task</p>
+                <div class="progress-wrap">
+                  <div class="progress-label">
+                    <span>Progress</span>
+                    <span id="progressText">0%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                  </div>
+                </div>
+                <button class="primary-button full-width mt-20">Start Session</button>
+              </div>
+            </div>
+
+            <div class="mini-calendar">
+              <div class="cal-header">
+                <span id="calendarMonthLabel">August 2026</span>
+                <div>
+                  <button class="icon-button small" id="prevMonthBtn" type="button" aria-label="Previous month">‹</button>
+                  <button class="icon-button small" id="nextMonthBtn" type="button" aria-label="Next month">›</button>
                 </div>
               </div>
-              <button class="primary-button full-width mt-20">Start Session</button>
+              <div class="calendar-days">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+              </div>
+              <div class="calendar-dates" id="calendarDates"></div>
             </div>
+          </aside>
+        </section>
+      </section>
+
+      <section class="view-panel" data-view-panel="calendar">
+        <header class="topbar calendar-topbar">
+          <div>
+            <p class="page-kicker">Academic Planner</p>
+            <h2>Calendar</h2>
           </div>
+          <div class="topbar-actions">
+            <button class="icon-button">☼</button>
+            <button class="primary-button" id="addCalendarTask">+ Add Event</button>
+          </div>
+        </header>
 
-          <div class="mini-calendar">
-            <div class="cal-header">
-              <span>August 2026</span>
-              <div>
-                <button class="icon-button small">‹</button>
-                <button class="icon-button small">›</button>
+        <div class="calendar-panel">
+          <div class="calendar-shell">
+            <div class="calendar-header">
+              <span id="calendarHeaderMonth">August 2026</span>
+              <div class="calendar-nav">
+                <button type="button" class="icon-button small" id="calendarPrevBtn">‹</button>
+                <button type="button" class="icon-button small" id="calendarNextBtn">›</button>
               </div>
             </div>
-            <div class="calendar-days">
+
+            <div class="calendar-weekdays">
               <span>Mon</span>
               <span>Tue</span>
               <span>Wed</span>
@@ -152,26 +191,18 @@
               <span>Sat</span>
               <span>Sun</span>
             </div>
-            <div class="calendar-dates">
-              <button class="date-button muted">29</button>
-              <button class="date-button muted">30</button>
-              <button class="date-button muted">31</button>
-              <button class="date-button">1</button>
-              <button class="date-button">2</button>
-              <button class="date-button">3</button>
-              <button class="date-button">4</button>
-              <button class="date-button">5</button>
-              <button class="date-button">6</button>
-              <button class="date-button">7</button>
-              <button class="date-button">8</button>
-              <button class="date-button">9</button>
-              <button class="date-button active">11</button>
-              <button class="date-button">12</button>
-              <button class="date-button">13</button>
-              <button class="date-button">14</button>
-            </div>
+
+            <div class="calendar-grid" id="calendarGrid"></div>
           </div>
-        </aside>
+
+          <aside class="day-panel">
+            <div class="day-card">
+              <span class="section-label">Selected Day</span>
+              <h3 id="selectedDateLabel">No date selected</h3>
+              <ul id="selectedDayTasks" class="selected-day-list"></ul>
+            </div>
+          </aside>
+        </div>
       </section>
     </main>
   </div>
@@ -280,5 +311,6 @@
 
   <script src="js/app.js"></script>
   <script src="js/profile.js"></script>
+  <script src="js/calendar.js"></script>
 </body>
 </html>
