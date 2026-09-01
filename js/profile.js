@@ -20,6 +20,9 @@ function openProfileModal() {
     updateProfileStats();
 }
 
+// expose for nav routing
+window.openProfileModal = openProfileModal;
+
 // Close Profile Modal
 function closeProfileModal() {
     profileModal.classList.remove('open');

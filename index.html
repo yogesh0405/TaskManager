@@ -56,20 +56,8 @@
     </aside>
 
     <main class="main-content">
-      <div id="dashboardPage">
+      <div id="dashboardPage" class="view-panel active" data-view-panel="tasks">
         <header class="topbar">
-          <div>
-            <p class="page-kicker">Student Dashboard</p>
-            <h2>Today’s Tasks</h2>
-          </div>
-          <div class="topbar-actions">
-            <button class="icon-button">☼</button>
-            <button class="primary-button" id="openTaskForm">+ Add Task</button>
-          </div>
-        </header>
-
-        <section class="stats-row">
-        <article class="stat-card">
           <div>
             <p class="page-kicker">Student Dashboard</p>
             <h2>Today’s Tasks</h2>
@@ -171,7 +159,7 @@
             </div>
           </aside>
         </section>
-      </section>
+      </div>
 
       <section class="view-panel" data-view-panel="calendar">
         <header class="topbar calendar-topbar">
@@ -217,9 +205,45 @@
           </aside>
         </div>
       </section>
-      </div>
 
-      <section class="studyplan-page hidden" id="studyPlanPage">
+        <section class="view-panel" id="completedPage" data-view-panel="completed">
+          <header class="topbar">
+            <div>
+              <p class="page-kicker">Completed</p>
+              <h2>Finished Tasks</h2>
+            </div>
+          </header>
+
+          <section class="content-layout">
+            <section class="task-panel">
+              <div class="section-header">
+                <div>
+                  <span class="section-label">Completed Tasks</span>
+                  <h3>All finished items</h3>
+                </div>
+              </div>
+
+              <div class="tasks-container" id="completedList">
+                <!-- Completed tasks render here -->
+              </div>
+            </section>
+
+            <aside class="focus-panel">
+              <div class="focus-card">
+                <div class="focus-header">
+                  <div>
+                    <span class="section-label">Summary</span>
+                    <h3>Completion Overview</h3>
+                  </div>
+                  <span class="round-badge" id="completedCount">0</span>
+                </div>
+                <p id="completedMeta">No completed tasks yet.</p>
+              </div>
+            </aside>
+          </section>
+        </section>
+
+        <section class="studyplan-page view-panel" id="studyPlanPage" data-view-panel="studyPlan">
         <header class="topbar">
           <div>
             <p class="page-kicker">Study Plan</p>
@@ -389,5 +413,7 @@
   <script src="js/profile.js"></script>
   <script src="js/calendar.js"></script>
   <script src="js/studyplan.js"></script>
+  <script src="js/completed.js"></script>
+  <script src="js/nav.js"></script>
 </body>
 </html>

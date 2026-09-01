@@ -1,5 +1,5 @@
 const calendarController = (() => {
-  const navLinks = document.querySelectorAll('.nav-link');
+  const navLinks = document.querySelectorAll('.nav-link[data-view]');
   const panels = document.querySelectorAll('.view-panel');
   const calendarGrid = document.getElementById('calendarGrid');
   const calendarHeaderMonth = document.getElementById('calendarHeaderMonth');
@@ -12,6 +12,12 @@ const calendarController = (() => {
     currentMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     selectedDate: new Date()
   };
+
+  // Debug: ensure required elements exist
+  const required = { calendarGrid, calendarHeaderMonth, selectedDateLabel, selectedDayTasks, prevBtn, nextBtn };
+  Object.entries(required).forEach(([k, v]) => {
+    if (!v) console.warn(`calendar.js: missing element ${k}`);
+  });
 
   function getDateKey(date) {
     const year = date.getFullYear();
@@ -33,11 +39,15 @@ const calendarController = (() => {
     panels.forEach(panel => {
       panel.classList.toggle('active', panel.dataset.viewPanel === viewName);
     });
-
-    navLinks.forEach(link => {
-      const active = link.dataset.view === viewName;
-      link.classList.toggle('active', active);
-    });
+    // Ensure only the corresponding nav link is active
+    document.querySelectorAll('.nav-link.active').forEach(n => n.classList.remove('active'));
+    const viewLink = document.querySelector(`.nav-link[data-view="${viewName}"]`);
+    if (viewLink) viewLink.classList.add('active');
+    console.log('calendar.js: switched view to', viewName);
+    // Ensure calendar is rendered when the calendar view is shown
+    if (viewName === 'calendar') {
+      try { render(); } catch (err) { console.warn('calendar.js: render failed while switching view', err); }
+    }
   }
 
   function getTasksForDate(dateKey) {
@@ -71,6 +81,7 @@ const calendarController = (() => {
   }
 
   function render() {
+    console.log('calendar.js: render start', state.currentMonth.toISOString().slice(0,10));
     const label = new Intl.DateTimeFormat(undefined, {
       month: 'long',
       year: 'numeric'
@@ -125,37 +136,58 @@ const calendarController = (() => {
     }
 
     renderSelectedDate();
+    console.log('calendar.js: render complete');
   }
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      const viewName = link.dataset.view || 'tasks';
-      if (viewName === 'calendar') {
-        switchView('calendar');
-      } else {
-        switchView('tasks');
-      }
+  if (navLinks && navLinks.length) {
+    navLinks.forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        const viewName = link.dataset.view || 'tasks';
+        if (viewName === 'calendar') {
+          switchView('calendar');
+        } else {
+          switchView('tasks');
+        }
+      });
     });
-  });
+  }
 
-  prevBtn.addEventListener('click', () => {
+  // Direct debug listener for the calendar nav link
+  const calendarNavLink = document.querySelector('.nav-link[data-view="calendar"]');
+  if (calendarNavLink) {
+    calendarNavLink.addEventListener('click', (e) => {
+      console.log('calendar.js: calendar nav link clicked');
+    });
+  } else {
+    console.warn('calendar.js: calendar nav link not found');
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
     state.currentMonth = new Date(
       state.currentMonth.getFullYear(),
       state.currentMonth.getMonth() - 1,
       1
     );
     render();
-  });
+    });
+  } else {
+    console.warn('calendar.js: prevBtn not found');
+  }
 
-  nextBtn.addEventListener('click', () => {
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
     state.currentMonth = new Date(
       state.currentMonth.getFullYear(),
       state.currentMonth.getMonth() + 1,
       1
     );
     render();
-  });
+    });
+  } else {
+    console.warn('calendar.js: nextBtn not found');
+  }
 
   switchView('tasks');
   render();
