@@ -10,3 +10,6 @@ The application helps students stay organized and manage deadlines effectively.
 It is built using modern web development technologies.
 The project is suitable for learning and practicing software development concepts.
 Future improvements may include reminders, notifications, and user authentication.
+
+
+Edited by PP Koshe (Master Branch)
