@@ -31,6 +31,17 @@ const openTaskFormButton = document.getElementById('openTaskForm');
 const closeModalButton = document.getElementById('closeModal');
 const cancelTaskButton = document.getElementById('cancelTask');
 const taskForm = document.getElementById('taskForm');
+const calendarDates = document.getElementById('calendarDates');
+const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+const prevMonthButton = document.getElementById('prevMonthBtn');
+const nextMonthButton = document.getElementById('nextMonthBtn');
+
+window.taskManagerTasks = tasks;
+
+const calendarState = {
+  currentMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  selectedDate: new Date()
+};
 
 function formatDate(dateValue) {
   const date = new Date(dateValue + 'T00:00:00');
@@ -39,6 +50,68 @@ function formatDate(dateValue) {
     month: 'short',
     year: 'numeric'
   });
+}
+
+function getDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function isSameDate(firstDate, secondDate) {
+  return getDateKey(firstDate) === getDateKey(secondDate);
+}
+
+function renderCalendar() {
+  const monthLabel = new Intl.DateTimeFormat(undefined, {
+    month: 'long',
+    year: 'numeric'
+  }).format(calendarState.currentMonth);
+
+  calendarMonthLabel.textContent = monthLabel;
+
+  const monthStart = new Date(
+    calendarState.currentMonth.getFullYear(),
+    calendarState.currentMonth.getMonth(),
+    1
+  );
+
+  const firstVisibleDay = new Date(monthStart);
+  const offset = (monthStart.getDay() + 6) % 7;
+  firstVisibleDay.setDate(monthStart.getDate() - offset);
+
+  calendarDates.innerHTML = '';
+
+  for (let index = 0; index < 42; index += 1) {
+    const date = new Date(firstVisibleDay);
+    date.setDate(firstVisibleDay.getDate() + index);
+
+    const dateButton = document.createElement('button');
+    dateButton.type = 'button';
+    dateButton.className = 'date-button';
+    dateButton.textContent = date.getDate();
+
+    if (date.getMonth() !== calendarState.currentMonth.getMonth()) {
+      dateButton.classList.add('muted');
+    }
+
+    if (isSameDate(date, calendarState.selectedDate)) {
+      dateButton.classList.add('active');
+    }
+
+    const hasTaskOnDate = tasks.some(task => task.date === getDateKey(date));
+    if (hasTaskOnDate) {
+      dateButton.classList.add('has-task');
+    }
+
+    dateButton.addEventListener('click', () => {
+      calendarState.selectedDate = new Date(date);
+      renderCalendar();
+    });
+
+    calendarDates.appendChild(dateButton);
+  }
 }
 
 function calculateStats() {
@@ -117,6 +190,9 @@ function renderTasks() {
   });
 
   calculateStats();
+  if (window.calendarController && typeof window.calendarController.render === 'function') {
+    window.calendarController.render();
+  }
 }
 
 function openModal() {
@@ -161,6 +237,7 @@ taskForm.addEventListener('submit', event => {
   taskForm.reset();
   closeModal();
   renderTasks();
+  window.taskManagerTasks = tasks;
 });
 
 function setupDate() {
@@ -173,5 +250,24 @@ function setupDate() {
   document.getElementById('todayDate').textContent = `${dayNumber} ${month}`;
 }
 
+prevMonthButton.addEventListener('click', () => {
+  calendarState.currentMonth = new Date(
+    calendarState.currentMonth.getFullYear(),
+    calendarState.currentMonth.getMonth() - 1,
+    1
+  );
+  renderCalendar();
+});
+
+nextMonthButton.addEventListener('click', () => {
+  calendarState.currentMonth = new Date(
+    calendarState.currentMonth.getFullYear(),
+    calendarState.currentMonth.getMonth() + 1,
+    1
+  );
+  renderCalendar();
+});
+
 setupDate();
+renderCalendar();
 renderTasks();
