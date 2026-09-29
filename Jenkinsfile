@@ -33,9 +33,22 @@ pipeline {
       }
     }
 
+    stage('Test') {
+      steps {
+        script {
+          if (fileExists('package.json')) {
+            sh 'npm test'
+            junit allowEmptyResults: true, testResults: 'test-results/*.xml'
+          } else {
+            sh 'echo "No package.json — skipping test execution"'
+          }
+        }
+      }
+    }
+
     stage('Archive') {
       steps {
-        archiveArtifacts artifacts: '**/*', excludes: '**/node_modules/**', fingerprint: true
+        archiveArtifacts artifacts: 'test-results/*.json, test-results/*.xml, **/*', excludes: '**/node_modules/**', fingerprint: true
       }
     }
   }

@@ -1,0 +1,9 @@
+{
+  "name": "taskmanager",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node -e \"console.log('Static site build step: not required for this frontend project.');\"",
+    "test": "node test-runner.js"
+  }
+}
