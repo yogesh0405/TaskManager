@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" failures="0" errors="0" time="0.124">
-  <testsuite name="Smoke Test" tests="1" failures="0" errors="0" skipped="0" time="0.073">
-    <testcase classname="TaskManager" name="Smoke Test" time="0.073">
+<testsuites tests="2" failures="0" errors="0" time="0.096">
+  <testsuite name="Smoke Test" tests="1" failures="0" errors="0" skipped="0" time="0.039">
+    <testcase classname="TaskManager" name="Smoke Test" time="0.039">
 
-      <system-out>Smoke test passed
+      <system-out>Test Cases Pass
 </system-out>
     </testcase>
   </testsuite>
-  <testsuite name="Asset Test" tests="1" failures="0" errors="0" skipped="0" time="0.051">
-    <testcase classname="TaskManager" name="Asset Test" time="0.051">
+  <testsuite name="Asset Test" tests="1" failures="0" errors="0" skipped="0" time="0.057">
+    <testcase classname="TaskManager" name="Asset Test" time="0.057">
 
-      <system-out>Asset OK: /css/styles.css
-Asset OK: /css/calendar.css
-Asset OK: /css/profile.css
-Asset OK: /css/studyplan.css
-Asset OK: /js/app.js
-Asset OK: /js/calendar.js
-Asset OK: /js/completed.js
-Asset OK: /js/nav.js
-Asset OK: /js/profile.js
-Asset OK: /js/studyplan.js
-Asset OK: /index.html
-Asset checks passed
+      <system-out>Test Cases Pass
 </system-out>
     </testcase>
   </testsuite>

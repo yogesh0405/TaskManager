@@ -3,7 +3,7 @@
     "total": 2,
     "passed": 2,
     "failed": 0,
-    "durationMs": 124
+    "durationMs": 96
   },
   "results": [
     {
@@ -11,8 +11,8 @@
       "command": "node smoke.test.js",
       "success": true,
       "exitCode": 0,
-      "durationMs": 73,
-      "stdout": "Smoke test passed\n",
+      "durationMs": 39,
+      "stdout": "Test Cases Pass\n",
       "stderr": ""
     },
     {
@@ -20,8 +20,8 @@
       "command": "node assets.test.js",
       "success": true,
       "exitCode": 0,
-      "durationMs": 51,
-      "stdout": "Asset OK: /css/styles.css\nAsset OK: /css/calendar.css\nAsset OK: /css/profile.css\nAsset OK: /css/studyplan.css\nAsset OK: /js/app.js\nAsset OK: /js/calendar.js\nAsset OK: /js/completed.js\nAsset OK: /js/nav.js\nAsset OK: /js/profile.js\nAsset OK: /js/studyplan.js\nAsset OK: /index.html\nAsset checks passed\n",
+      "durationMs": 57,
+      "stdout": "Test Cases Pass\n",
       "stderr": ""
     }
   ]

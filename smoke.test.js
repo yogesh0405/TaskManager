@@ -20,11 +20,38 @@ function fetch(url) {
     const res = await fetch(BASE_URL);
     assert.strictEqual(res.status, 200, `Expected 200 from ${BASE_URL}, got ${res.status}`);
 
-    const html = res.body.toLowerCase();
-    assert.ok(html.includes('<html') || html.includes('<!doctype html'), 'Homepage HTML response is invalid');
-    assert.ok(html.includes('task') || html.length > 0, 'Homepage did not return expected content');
+    const html = res.body;
+    const lowerHtml = html.toLowerCase();
 
-    console.log('Smoke test passed');
+    assert.ok(html.includes('<!doctype html') || html.includes('<html'), 'Homepage HTML response is invalid');
+
+    const requiredContent = [
+      'Student Task Manager',
+      'Task Manager',
+      'My Tasks',
+      'Study Plan',
+      'Completed',
+      'Calendar',
+      'Profile'
+    ];
+
+    requiredContent.forEach((text) => {
+      assert.ok(lowerHtml.includes(text.toLowerCase()), `Homepage missing expected text: ${text}`);
+    });
+
+    const requiredIds = [
+      'tasksList',
+      'totalTasks',
+      'activeTasks',
+      'completedTasks',
+      'nextTaskTitle'
+    ];
+
+    requiredIds.forEach((id) => {
+      assert.ok(html.includes(`id="${id}"`), `Homepage missing required element: ${id}`);
+    });
+
+    console.log('Test Cases Pass');
   } catch (error) {
     console.error('Smoke test failed:', error.message);
     process.exit(1);

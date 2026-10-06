@@ -154,6 +154,9 @@ const tests = [
     })
     .join('\n');
 
+  const summaryLine = failedCount === 0 ? 'Test Cases Pass' : 'Test Cases Failed';
+  console.log(`\n${summaryLine}`);
+
   const xmlPath = path.join(reportDir, 'test-results.xml');
   const junitXml = `<?xml version="1.0" encoding="UTF-8"?>\n<testsuites tests="${xmlTests}" failures="${xmlFailures}" errors="0" time="${xmlTime}">\n${xmlSuites}\n</testsuites>\n`;
   fs.writeFileSync(xmlPath, junitXml);
