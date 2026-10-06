@@ -1,0 +1,56 @@
+# From the TaskManager project directory
+cd /home/administrator/Desktop/33308_Demo1/TaskManager
+
+# Install dependencies and run the local tests
+npm ci
+npm test
+
+# Start Minikube and confirm the node is ready
+minikube start
+kubectl get nodes
+
+# Build the application image and load it into Minikube
+docker build -t taskmanager:2.0 .
+minikube image load taskmanager:2.0
+
+# Deploy the Task Manager application
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl rollout status deployment/taskmanager
+kubectl get pods,services
+
+# Create/update Prometheus configuration and deploy Prometheus
+kubectl create configmap prometheus-config --from-file=prometheus.yml --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f prometheus-deployment.yaml
+kubectl apply -f prometheus-service.yaml
+kubectl rollout status deployment/prometheus-deployment
+kubectl get pods,services
+
+# Terminal 1: forward the Task Manager service
+kubectl port-forward service/taskmanager 3000:80
+
+# Terminal 2: verify that /metrics responds
+curl http://localhost:3000/metrics
+
+# Terminal 3: open a Prometheus connection
+kubectl port-forward service/prometheus-service 9090:9090
+
+# Open these URLs in a browser
+http://localhost:3000
+http://localhost:9090
+
+# In Prometheus, open Status → Targets and verify the task-manager target is UP.
+# Run these queries in the Prometheus query box:
+up{job="task-manager"}
+task_manager_http_requests_total
+rate(task_manager_http_requests_total[1m])
+process_resident_memory_bytes
+nodejs_heap_size_used_bytes
+
+# Generate app traffic from another terminal
+for i in $(seq 1 20); do curl -s http://localhost:3000/ >/dev/null; done
+
+# Check the metrics endpoint again
+curl -s http://localhost:3000/metrics | grep -E 'task_manager_http_requests_total|process_resident_memory_bytes|nodejs_heap_size_used_bytes'
+
+# After the practical, stop each port-forward with Ctrl+C
