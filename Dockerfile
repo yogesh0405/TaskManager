@@ -1,13 +1,17 @@
-# Use the official Nginx image based on Alpine Linux for a tiny image size
-FROM nginx:alpine
+FROM node:22-alpine
 
-# Copy all static files from your local project directory into Nginx's default public folder
-COPY . /usr/share/nginx/html/
+WORKDIR /app
 
-# Expose port 80 to allow external access to the web server
-EXPOSE 80
+COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Start Nginx in the foreground so the Docker container stays active
-CMD ["nginx", "-g", "daemon off;"]
+COPY server.js index.html ./
+COPY css ./css
+COPY js ./js
+
+ENV NODE_ENV=production
+EXPOSE 3000
+
+CMD ["npm", "start"]
 
 

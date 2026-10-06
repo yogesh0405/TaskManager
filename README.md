@@ -32,3 +32,41 @@ The project is suitable for learning and practicing software development concept
 Future improvements may include reminders, notifications, and user authentication.
 
 modiefied readme
+
+## Assignment 7: Prometheus monitoring
+
+The app is served by the Node.js server in `server.js` on port 3000. The
+Kubernetes Service remains `taskmanager` on port 80 and forwards to that
+container port. The `/metrics` endpoint exposes the HTTP request counter and
+default Node.js/process metrics.
+
+### Run locally
+
+1. Install dependencies with `npm ci`.
+2. Start the app with `npm start`.
+3. Open `http://localhost:3000/metrics` and verify
+	`task_manager_http_requests_total` and `process_resident_memory_bytes`.
+
+### Deploy to Minikube
+
+```sh
+docker build -t taskmanager:2.0 .
+minikube image load taskmanager:2.0
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl rollout status deployment/taskmanager
+kubectl create configmap prometheus-config --from-file=prometheus.yml --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f prometheus-deployment.yaml
+kubectl apply -f prometheus-service.yaml
+kubectl rollout status deployment/prometheus-deployment
+minikube service taskmanager --url
+minikube service prometheus-service
+```
+
+In Prometheus, open **Status → Targets** and verify the `task-manager` job is
+**UP**. Try `up{job="task-manager"}`,
+`task_manager_http_requests_total`,
+`rate(task_manager_http_requests_total[1m])`, and
+`process_resident_memory_bytes` in the query page. Generate traffic by using
+the app and refresh the queries. The request rate is more useful after at
+least one minute of scraping.

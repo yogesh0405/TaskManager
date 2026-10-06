@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "build": "node -e \"console.log('Static site build step: not required for this frontend project.');\"",
     "test": "node test-runner.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "prom-client": "^15.1.3"
   }
 }

@@ -59,7 +59,8 @@ function waitForServer(url, timeoutMs = 15000) {
 
 const tests = [
   { name: 'Smoke Test', command: 'node', args: ['smoke.test.js'] },
-  { name: 'Asset Test', command: 'node', args: ['assets.test.js'] }
+  { name: 'Asset Test', command: 'node', args: ['assets.test.js'] },
+  { name: 'Metrics Test', command: 'node', args: ['metrics.test.js'] }
 ];
 
 (async () => {
@@ -69,15 +70,21 @@ const tests = [
 
   try {
     effectivePort = await getFreePort();
-    server = spawn('python3', ['-m', 'http.server', String(effectivePort), '--directory', rootDir], {
+    const serverEnv = {
+      ...process.env,
+      PORT: String(effectivePort)
+    };
+
+    server = spawn(process.execPath, ['server.js'], {
       cwd: rootDir,
+      env: serverEnv,
       stdio: 'ignore',
       detached: true
     });
     server.unref();
 
     testEnv = {
-      ...process.env,
+      ...serverEnv,
       APP_URL: process.env.APP_URL || `http://localhost:${effectivePort}`
     };
 
