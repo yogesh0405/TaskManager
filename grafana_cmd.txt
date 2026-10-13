@@ -1,0 +1,47 @@
+# Grafana deployment & verification commands for TaskManager project
+
+# Apply manifests and create Grafana resources
+kubectl apply -f grafana/grafana.yaml
+
+# Wait for Grafana deployment to be ready
+kubectl rollout status deployment/grafana
+kubectl get pods -l app=grafana -o wide
+
+# (Optional) Describe service to verify ports
+kubectl describe svc grafana-service
+
+# Port-forward Grafana service (or pod) to localhost:3000
+# Use service:
+kubectl port-forward svc/grafana-service 3000:3000
+# If service forwarding fails, port-forward directly to the pod (replace POD_NAME):
+# kubectl port-forward pod/grafana-7d85b7664d-8gf9t 3000:3000
+
+# Access Grafana UI in browser:
+# http://localhost:3000
+# Login: username "admin" password "admin"
+
+# Verify Prometheus datasource in Grafana UI (Configuration → Data Sources)
+# Or check Grafana provisioning logs to confirm datasource was inserted
+kubectl logs deployment/grafana | grep -i provisioning -n || true
+
+# Verify dashboards are provisioned (search by title in Grafana UI)
+# Verify panels and live metrics.
+
+# Prometheus checks (ensure Prometheus is running):
+kubectl get pods -l app=prometheus -o wide
+kubectl port-forward svc/prometheus-service 9090:9090
+# Open Prometheus UI: http://localhost:9090
+# Run PromQL queries in Prometheus UI or Grafana:
+# up{job="task-manager"}
+# task_manager_http_requests_total
+# rate(task_manager_http_requests_total[1m])
+# process_resident_memory_bytes
+# nodejs_heap_size_used_bytes
+
+# Generate application traffic to see real-time updates:
+for i in $(seq 1 50); do curl -s http://localhost:3000/ >/dev/null; done
+
+# Confirm metrics endpoint shows expected metrics:
+curl -s http://localhost:3000/metrics | grep -E 'task_manager_http_requests_total|process_resident_memory_bytes|nodejs_heap_size_used_bytes'
+
+# When finished, stop port-forwards with Ctrl+C or kill the background jobs.
