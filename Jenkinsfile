@@ -1,4 +1,4 @@
-pipeline {
+/*pipeline {
   agent any
 
   stages {
@@ -48,7 +48,7 @@ pipeline {
 
     stage('Archive') {
       steps {
-        archiveArtifacts artifacts: 'test-results/*.json, test-results/*.xml, **/*', excludes: '**/node_modules/**', fingerprint: true
+        archiveArtifacts artifacts: 'test-results/*.json, test-results/*.xml, **/* /*', excludes: '**/node_modules/**', fingerprint: true
       }
     }
   }
@@ -61,4 +61,52 @@ pipeline {
       echo 'Jenkins pipeline failed.'
     }
   }
+}
+*/
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm ci'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'npm test'
+            }
+        }
+
+        stage('Archive Results') {
+            steps {
+                archiveArtifacts artifacts: 'test-results/**',
+                                 allowEmptyArchive: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Jenkins pipeline completed successfully.'
+        }
+        failure {
+            echo 'Jenkins pipeline failed.'
+        }
+    }
 }
