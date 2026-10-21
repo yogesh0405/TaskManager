@@ -239,3 +239,4 @@ function writeReports(summary) {
     }
   }
 })();
+process.exitCode = 1;
