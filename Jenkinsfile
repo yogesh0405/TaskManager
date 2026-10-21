@@ -20,7 +20,7 @@ pipeline {
                 bat 'npm run build'
             }
         }
-        
+
 stage('Test') {
     steps {
         bat 'echo ===== CURRENT WORKSPACE ====='
@@ -37,12 +37,6 @@ stage('Test') {
     }
 }
 
-
-        stage('Test') {
-            steps {
-                bat 'npm test'
-            }
-        }
 
         stage('Archive Results') {
             steps {
