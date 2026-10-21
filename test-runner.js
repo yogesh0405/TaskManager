@@ -1,266 +1,241 @@
 
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
-const net = require('net');
-const { spawn, spawnSync } = require('child_process');
+const { app } = require('./server');
+const { spawn } = require('child_process');
 
 const rootDir = __dirname;
 const reportDir = path.join(rootDir, 'test-results');
 
 fs.mkdirSync(reportDir, { recursive: true });
 
-function getFreePort() {
-  return new Promise((resolve, reject) => {
-    const server = net.createServer();
-
-    server.listen(0, '127.0.0.1', () => {
-      const { port } = server.address();
-
-      server.close((error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(port);
-        }
-      });
-    });
-
-    server.on('error', reject);
-  });
-}
-
-function waitForServer(url, timeoutMs = 15000) {
-  return new Promise((resolve, reject) => {
-    const startTime = Date.now();
-
-    function check() {
-      const req = http.get(url, (res) => {
-        const statusCode = res.statusCode;
-        res.resume();
-
-        if (statusCode === 200) {
-          resolve();
-          return;
-        }
-
-        if (Date.now() - startTime >= timeoutMs) {
-          reject(
-            new Error(
-              `Server did not return HTTP 200 from ${url}. ` +
-              `Last status: ${statusCode}`
-            )
-          );
-          return;
-        }
-
-        setTimeout(check, 200);
-      });
-
-      req.on('error', () => {
-        if (Date.now() - startTime >= timeoutMs) {
-          reject(new Error(`Timed out waiting for ${url}`));
-          return;
-        }
-
-        setTimeout(check, 200);
-      });
-
-      req.setTimeout(1000, () => req.destroy());
-    }
-
-    check();
-  });
-}
-
 const tests = [
-  { name: 'Smoke Test', command: 'node', args: ['smoke.test.js'] },
-  { name: 'Asset Test', command: 'node', args: ['assets.test.js'] },
-  { name: 'Metrics Test', command: 'node', args: ['metrics.test.js'] }
+  { name: 'Smoke Test', args: ['smoke.test.js'] },
+  { name: 'Asset Test', args: ['assets.test.js'] },
+  { name: 'Metrics Test', args: ['metrics.test.js'] }
 ];
 
-(async () => {
-  let server;
-  let testEnv;
-  let serverExited = false;
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
 
-  try {
-    const effectivePort = await getFreePort();
-    const appUrl = `http://127.0.0.1:${effectivePort}`;
+function runOneTest(test, testEnv) {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+    let stdout = '';
+    let stderr = '';
+    let timedOut = false;
+    let settled = false;
 
-    const serverEnv = {
-      ...process.env,
-      PORT: String(effectivePort)
-    };
+    console.log(`\n=== Starting ${test.name} ===`);
 
-    // Always use the URL for the server started by this test runner.
-    testEnv = {
-      ...serverEnv,
-      APP_URL: appUrl
-    };
-
-    server = spawn(process.execPath, ['server.js'], {
+    const child = spawn(process.execPath, test.args, {
       cwd: rootDir,
-      env: serverEnv,
-      stdio: 'ignore'
+      env: testEnv,
+      windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe']
     });
 
-    server.on('error', (error) => {
-      console.error(`Application server failed to start: ${error.message}`);
-    });
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      child.kill();
+    }, 30000);
 
-    server.on('exit', (code) => {
-      serverExited = true;
+    function finish(code, error = null) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
 
-      if (code !== 0 && code !== null) {
-        console.error(`Application server exited with code ${code}`);
-      }
-    });
-
-    await waitForServer(appUrl);
-
-    if (serverExited) {
-      throw new Error('Application server exited before tests could run.');
-    }
-
-    console.log(`Test server is ready at ${appUrl}`);
-  } catch (error) {
-    console.error(`Failed to start local test server: ${error.message}`);
-
-    if (server && !server.killed) {
-      server.kill();
-    }
-
-    process.exit(1);
-  }
-
-  const results = [];
-  let passedCount = 0;
-  let failedCount = 0;
-  let totalDuration = 0;
-
-  try {
-    for (const test of tests) {
-      const startTime = Date.now();
-
-      const child = spawnSync(test.command, test.args, {
-        cwd: rootDir,
-        encoding: 'utf8',
-        env: testEnv
-      });
-
-      const duration = Date.now() - startTime;
-      totalDuration += duration;
-
-      const stdout = child.stdout || '';
-      const stderr = child.stderr || '';
-
-      const status =
-        child.error || child.status === null ? 1 : child.status;
-
-      const success = status === 0;
-
-      if (success) {
-        passedCount++;
-      } else {
-        failedCount++;
+      if (error) {
+        stderr = `${stderr}\n${error.message}`.trim();
       }
 
-      const entry = {
-        name: test.name,
-        command: `${test.command} ${test.args.join(' ')}`,
-        success,
-        exitCode: status,
-        durationMs: duration,
-        stdout,
-        stderr: child.error
-          ? `${stderr}\n${child.error.message}`.trim()
-          : stderr
-      };
+      const exitCode = timedOut ? 1 : (code ?? 1);
+      const success = exitCode === 0;
+      const durationMs = Date.now() - startTime;
 
-      results.push(entry);
-
-      console.log(`\n=== ${test.name} ===`);
+      if (timedOut) {
+        stderr = `${stderr}\nTest timed out after 30 seconds.`.trim();
+      }
 
       if (stdout) process.stdout.write(stdout);
-      if (entry.stderr) process.stderr.write(entry.stderr + '\n');
+      if (stderr) process.stderr.write(stderr + '\n');
+
+      console.log(
+        `${test.name}: ${success ? 'PASS' : 'FAIL'} (${durationMs} ms)`
+      );
+
+      resolve({
+        name: test.name,
+        command: `node ${test.args.join(' ')}`,
+        success,
+        exitCode,
+        durationMs,
+        stdout,
+        stderr
+      });
     }
-  } finally {
-    if (server && !server.killed) {
-      server.kill();
-    }
+
+    child.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    child.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    child.once('error', (error) => {
+      finish(1, error);
+    });
+
+    child.once('close', (code) => {
+      finish(code);
+    });
+  });
+}
+
+async function runTests(testEnv) {
+  const results = [];
+  let totalDuration = 0;
+
+  // Run tests sequentially to keep the output easy to follow.
+  for (const test of tests) {
+    const result = await runOneTest(test, testEnv);
+    results.push(result);
+    totalDuration += result.durationMs;
   }
 
-  const summary = {
-    summary: {
-      total: results.length,
-      passed: passedCount,
-      failed: failedCount,
-      durationMs: totalDuration
-    },
-    results
-  };
+  const passedCount = results.filter((result) => result.success).length;
+  const failedCount = results.length - passedCount;
 
+  return {
+    results,
+    passedCount,
+    failedCount,
+    totalDuration
+  };
+}
+
+function writeReports(summary) {
   const jsonPath = path.join(reportDir, 'test-results.json');
 
   fs.writeFileSync(
     jsonPath,
-    JSON.stringify(summary, null, 2)
+    JSON.stringify({
+      summary: {
+        total: summary.results.length,
+        passed: summary.passedCount,
+        failed: summary.failedCount,
+        durationMs: summary.totalDuration
+      },
+      results: summary.results
+    }, null, 2)
   );
 
-  function escapeXml(value) {
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
-  }
-
-  const xmlSuites = results.map((result) => {
-    const suiteName = escapeXml(result.name);
+  const xmlSuites = summary.results.map((result) => {
+    const name = escapeXml(result.name);
     const output = escapeXml(result.stdout);
     const errors = escapeXml(result.stderr);
     const duration = (result.durationMs / 1000).toFixed(3);
 
-    const failureText = result.success
+    const failure = result.success
       ? ''
-      : `<failure message="${suiteName}">${errors || output || 'Test failed'}</failure>`;
+      : `<failure message="${name}">${errors || output || 'Test failed'}</failure>`;
+
+    const systemOut = output
+      ? `<system-out>${output}</system-out>`
+      : '';
+
+    const systemErr = errors
+      ? `<system-err>${errors}</system-err>`
+      : '';
 
     return [
-      `  <testsuite name="${suiteName}" tests="1" failures="${result.success ? 0 : 1}" errors="0" skipped="0" time="${duration}">`,
-      `    <testcase classname="TaskManager" name="${suiteName}" time="${duration}">`,
-      `      ${failureText}`,
-      errors ? `      <system-err>${errors}</system-err>` : '',
-      output ? `      <system-out>${output}</system-out>` : '',
-      '    </testcase>',
-      '  </testsuite>'
+      `<testsuite name="${name}" tests="1" failures="${result.success ? 0 : 1}" errors="0" skipped="0" time="${duration}">`,
+      `<testcase classname="TaskManager" name="${name}" time="${duration}">`,
+      failure,
+      systemOut,
+      systemErr,
+      '</testcase>',
+      '</testsuite>'
     ].filter(Boolean).join('\n');
   }).join('\n');
 
   const xmlPath = path.join(reportDir, 'test-results.xml');
-  const xmlTime = (totalDuration / 1000).toFixed(3);
 
-  const junitXml = [
+  const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    `<testsuites tests="${results.length}" failures="${failedCount}" errors="0" time="${xmlTime}">`,
+    `<testsuites tests="${summary.results.length}" failures="${summary.failedCount}" errors="0" time="${(summary.totalDuration / 1000).toFixed(3)}">`,
     xmlSuites,
     '</testsuites>',
     ''
   ].join('\n');
 
-  fs.writeFileSync(xmlPath, junitXml);
-
-  console.log('\n========== TEST SUMMARY ==========');
-  console.log(`Total tests: ${results.length}`);
-  console.log(`Passed: ${passedCount}`);
-  console.log(`Failed: ${failedCount}`);
-  console.log(failedCount === 0 ? 'Test Cases Pass' : 'Test Cases Failed');
+  fs.writeFileSync(xmlPath, xml);
 
   console.log(`\nJSON report saved to ${jsonPath}`);
   console.log(`JUnit report saved to ${xmlPath}`);
+}
 
-  if (failedCount > 0) {
+(async () => {
+  let server;
+
+  try {
+    console.log('Starting Express test server...');
+
+    // Let Windows assign an available port.
+    server = app.listen(0, '127.0.0.1');
+
+    await new Promise((resolve, reject) => {
+      server.once('listening', resolve);
+      server.once('error', reject);
+    });
+
+    const port = server.address().port;
+    const appUrl = `http://127.0.0.1:${port}`;
+
+    const testEnv = {
+      ...process.env,
+      PORT: String(port),
+      APP_URL: appUrl
+    };
+
+    console.log(`Test server is ready at ${appUrl}`);
+    console.log('Starting test cases...');
+
+    const summary = await runTests(testEnv);
+
+    console.log('\n========== TEST SUMMARY ==========');
+    console.log(`Total tests: ${summary.results.length}`);
+    console.log(`Passed: ${summary.passedCount}`);
+    console.log(`Failed: ${summary.failedCount}`);
+
+    const allPassed =
+      summary.failedCount === 0 &&
+      summary.results.length === tests.length;
+
+    console.log(allPassed ? 'Test Cases Pass' : 'Test Cases Failed');
+
+    writeReports(summary);
+
+    if (!allPassed) {
+      process.exitCode = 1;
+    }
+  } catch (error) {
+    console.error(`Test runner error: ${error.message}`);
     process.exitCode = 1;
+  } finally {
+    if (server && server.listening) {
+      await new Promise((resolve) => {
+        server.close(resolve);
+      });
+
+      console.log('Test server closed.');
+    }
   }
 })();
