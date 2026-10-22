@@ -32,7 +32,8 @@ function fetch(url) {
       'Study Plan',
       'Completed',
       'Calendar',
-      'Profile'
+      'Profile',
+      'TEXT_THAT_DOES_NOT_EXIST_FOR_DEMO'
     ];
 
     requiredContent.forEach((text) => {
