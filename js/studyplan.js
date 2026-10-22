@@ -79,17 +79,24 @@ function deleteStudyItem(id) {
 }
 
 function selectPage(pageKey) {
-  dashboardPage.classList.toggle('hidden', pageKey !== 'dashboard');
-  studyPlanPage.classList.toggle('hidden', pageKey !== 'studyPlan');
+  const mapping = { dashboard: 'tasks', studyPlan: 'studyPlan' };
+  const viewName = mapping[pageKey] || 'tasks';
 
-  navLinks.forEach(link => {
-    if (link.dataset.page === pageKey) {
-      link.classList.add('active');
-    } else {
-      link.classList.remove('active');
-    }
+  const panels = document.querySelectorAll('.view-panel');
+  panels.forEach(panel => {
+    panel.classList.toggle('active', panel.dataset.viewPanel === viewName);
   });
+
+  // Update nav active state: clear all and set the matching data-page link
+  document.querySelectorAll('.nav-link.active').forEach(n => n.classList.remove('active'));
+  const pageLink = document.querySelector(`.nav-link[data-page="${pageKey}"]`);
+  if (pageLink) pageLink.classList.add('active');
 }
+
+// Expose API for other scripts
+window.pageController = {
+  selectPage
+};
 
 studyPlanForm.addEventListener('submit', event => {
   event.preventDefault();
