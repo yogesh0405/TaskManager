@@ -20,6 +20,8 @@ app.use((req, res, next) => {
   next();
 });
 
+console.log("hello");
+
 // Serve static assets from the project directory.
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
