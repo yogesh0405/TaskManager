@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="3" failures="0" errors="0" time="0.157">
-  <testsuite name="Smoke Test" tests="1" failures="0" errors="0" skipped="0" time="0.044">
-    <testcase classname="TaskManager" name="Smoke Test" time="0.044">
-
-      <system-out>Test Cases Pass
+<testsuites tests="3" failures="0" errors="0" time="4.157">
+<testsuite name="Smoke Test" tests="1" failures="0" errors="0" skipped="0" time="1.438">
+<testcase classname="TaskManager" name="Smoke Test" time="1.438">
+<system-out>Test Cases Pass
 </system-out>
-    </testcase>
-  </testsuite>
-  <testsuite name="Asset Test" tests="1" failures="0" errors="0" skipped="0" time="0.067">
-    <testcase classname="TaskManager" name="Asset Test" time="0.067">
-
-      <system-out>Test Cases Pass
+</testcase>
+</testsuite>
+<testsuite name="Asset Test" tests="1" failures="0" errors="0" skipped="0" time="1.342">
+<testcase classname="TaskManager" name="Asset Test" time="1.342">
+<system-out>Test Cases Pass
 </system-out>
-    </testcase>
-  </testsuite>
-  <testsuite name="Metrics Test" tests="1" failures="0" errors="0" skipped="0" time="0.046">
-    <testcase classname="TaskManager" name="Metrics Test" time="0.046">
-
-      <system-out>Metrics test passed
+</testcase>
+</testsuite>
+<testsuite name="Metrics Test" tests="1" failures="0" errors="0" skipped="0" time="1.377">
+<testcase classname="TaskManager" name="Metrics Test" time="1.377">
+<system-out>Metrics test passed
 </system-out>
-    </testcase>
-  </testsuite>
+</testcase>
+</testsuite>
 </testsuites>

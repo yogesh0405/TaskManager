@@ -3,7 +3,7 @@
     "total": 3,
     "passed": 3,
     "failed": 0,
-    "durationMs": 157
+    "durationMs": 4157
   },
   "results": [
     {
@@ -11,7 +11,7 @@
       "command": "node smoke.test.js",
       "success": true,
       "exitCode": 0,
-      "durationMs": 44,
+      "durationMs": 1438,
       "stdout": "Test Cases Pass\n",
       "stderr": ""
     },
@@ -20,7 +20,7 @@
       "command": "node assets.test.js",
       "success": true,
       "exitCode": 0,
-      "durationMs": 67,
+      "durationMs": 1342,
       "stdout": "Test Cases Pass\n",
       "stderr": ""
     },
@@ -29,7 +29,7 @@
       "command": "node metrics.test.js",
       "success": true,
       "exitCode": 0,
-      "durationMs": 46,
+      "durationMs": 1377,
       "stdout": "Metrics test passed\n",
       "stderr": ""
     }
