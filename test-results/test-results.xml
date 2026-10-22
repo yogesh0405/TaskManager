@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="3" failures="0" errors="0" time="4.157">
-<testsuite name="Smoke Test" tests="1" failures="0" errors="0" skipped="0" time="1.438">
-<testcase classname="TaskManager" name="Smoke Test" time="1.438">
+<testsuites tests="3" failures="0" errors="0" time="3.973">
+<testsuite name="Smoke Test" tests="1" failures="0" errors="0" skipped="0" time="1.340">
+<testcase classname="TaskManager" name="Smoke Test" time="1.340">
 <system-out>Test Cases Pass
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="Asset Test" tests="1" failures="0" errors="0" skipped="0" time="1.342">
-<testcase classname="TaskManager" name="Asset Test" time="1.342">
+<testsuite name="Asset Test" tests="1" failures="0" errors="0" skipped="0" time="1.317">
+<testcase classname="TaskManager" name="Asset Test" time="1.317">
 <system-out>Test Cases Pass
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="Metrics Test" tests="1" failures="0" errors="0" skipped="0" time="1.377">
-<testcase classname="TaskManager" name="Metrics Test" time="1.377">
+<testsuite name="Metrics Test" tests="1" failures="0" errors="0" skipped="0" time="1.316">
+<testcase classname="TaskManager" name="Metrics Test" time="1.316">
 <system-out>Metrics test passed
 </system-out>
 </testcase>
