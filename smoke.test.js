@@ -33,7 +33,6 @@ function fetch(url) {
       'Completed',
       'Calendar',
       'Profile',
-      'TEXT_THAT_DOES_NOT_EXIST_FOR_DEMO',
     ];
 
     requiredContent.forEach((text) => {
